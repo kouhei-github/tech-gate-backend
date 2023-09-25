@@ -1,0 +1,7 @@
+### 最新記事一覧
+GET http://localhost:10001/api/v1/article/latest?page=1
+Content-Type: application/json
+
+### タグでの検索
+GET http://localhost:10001/api/v1/article?tag=Ruby
+Content-Type: application/json

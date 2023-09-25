@@ -1,0 +1,49 @@
+{
+    "rendered_body": "<h2 data-sourcepos=\"2:1-2:9\">\n<span id=\"状況\" class=\"fragment\"></span><a href=\"#%E7%8A%B6%E6%B3%81\"><i class=\"fa fa-link\"></i></a>状況</h2>\n<p data-sourcepos=\"3:1-3:169\">Devise Token Authの設定に以下の項目を追加したところログイン時に<code>NoMethodError (undefined method </code>downcase' for nil:NilClass)`となりました。</p>\n<div class=\"code-frame\" data-lang=\"rb\" data-sourcepos=\"5:1-15:3\">\n<div class=\"code-lang\"><span class=\"bold\">devise_token_auth.rb</span></div>\n<div class=\"highlight\"><pre><code><span class=\"no\">DeviseTokenAuth</span><span class=\"p\">.</span><span class=\"nf\">setup</span> <span class=\"k\">do</span> <span class=\"o\">|</span><span class=\"n\">config</span><span class=\"o\">|</span>\n\n  <span class=\"n\">config</span><span class=\"p\">.</span><span class=\"nf\">headers_names</span> <span class=\"o\">=</span> <span class=\"p\">{</span> <span class=\"s2\">\"access-token\"</span><span class=\"p\">:</span> <span class=\"s2\">\"access-token\"</span><span class=\"p\">,</span>\n                           <span class=\"ss\">client: </span><span class=\"s2\">\"client\"</span><span class=\"p\">,</span>\n                           <span class=\"ss\">expiry: </span><span class=\"s2\">\"expiry\"</span><span class=\"p\">,</span>\n                           <span class=\"ss\">uid: </span><span class=\"s2\">\"uid\"</span><span class=\"p\">,</span>\n                           <span class=\"s2\">\"token-type\"</span><span class=\"p\">:</span> <span class=\"s2\">\"token-type\"</span> <span class=\"p\">}</span>\n\n<span class=\"k\">end</span>\n</code></pre></div>\n</div>\n<h2 data-sourcepos=\"17:1-17:12\">\n<span id=\"解消法\" class=\"fragment\"></span><a href=\"#%E8%A7%A3%E6%B6%88%E6%B3%95\"><i class=\"fa fa-link\"></i></a>解消法</h2>\n<p data-sourcepos=\"19:1-19:95\">以下のように<code>authorization: \"authorization\"</code>を追記することで解消しました。</p>\n<div class=\"code-frame\" data-lang=\"rb\" data-sourcepos=\"21:1-32:3\">\n<div class=\"code-lang\"><span class=\"bold\">devise_token_auth.rb</span></div>\n<div class=\"highlight\"><pre><code><span class=\"no\">DeviseTokenAuth</span><span class=\"p\">.</span><span class=\"nf\">setup</span> <span class=\"k\">do</span> <span class=\"o\">|</span><span class=\"n\">config</span><span class=\"o\">|</span>\n\n  <span class=\"n\">config</span><span class=\"p\">.</span><span class=\"nf\">headers_names</span> <span class=\"o\">=</span> <span class=\"p\">{</span> <span class=\"s2\">\"access-token\"</span><span class=\"p\">:</span> <span class=\"s2\">\"access-token\"</span><span class=\"p\">,</span>\n                           <span class=\"ss\">client: </span><span class=\"s2\">\"client\"</span><span class=\"p\">,</span>\n                           <span class=\"ss\">expiry: </span><span class=\"s2\">\"expires\"</span><span class=\"p\">,</span>\n                           <span class=\"ss\">uid: </span><span class=\"s2\">\"uid\"</span><span class=\"p\">,</span>\n                           <span class=\"s2\">\"token-type\"</span><span class=\"p\">:</span> <span class=\"s2\">\"token-type\"</span><span class=\"p\">,</span>\n                           <span class=\"ss\">authorization: </span><span class=\"s2\">\"authorization\"</span> <span class=\"p\">}</span>\n\n<span class=\"k\">end</span>\n</code></pre></div>\n</div>\n<h2 data-sourcepos=\"34:1-34:9\">\n<span id=\"参考\" class=\"fragment\"></span><a href=\"#%E5%8F%82%E8%80%83\"><i class=\"fa fa-link\"></i></a>参考</h2>\n<p data-sourcepos=\"36:1-36:64\"><iframe id=\"qiita-embed-content__c6ea6ec4845658544bec27de475c2e55\" src=\"https://qiita.com/embed-contents/link-card#qiita-embed-content__c6ea6ec4845658544bec27de475c2e55\" data-content=\"https%3A%2F%2Fgithub.com%2Flynndylanhurley%2Fdevise_token_auth%2Fissues%2F1540\" frameborder=\"0\" scrolling=\"no\" loading=\"lazy\" style=\"width:100%;\" height=\"29\">\n</iframe>\n</p>\n",
+    "body": "\n## 状況\nDevise Token Authの設定に以下の項目を追加したところログイン時に`NoMethodError (undefined method `downcase' for nil:NilClass)`となりました。\n\n```rb:devise_token_auth.rb\nDeviseTokenAuth.setup do |config|\n\n  config.headers_names = { \"access-token\": \"access-token\",\n                           client: \"client\",\n                           expiry: \"expiry\",\n                           uid: \"uid\",\n                           \"token-type\": \"token-type\" }\n\nend\n```\n\n## 解消法\n\n以下のように`authorization: \"authorization\"`を追記することで解消しました。\n\n```rb:devise_token_auth.rb\nDeviseTokenAuth.setup do |config|\n\n  config.headers_names = { \"access-token\": \"access-token\",\n                           client: \"client\",\n                           expiry: \"expires\",\n                           uid: \"uid\",\n                           \"token-type\": \"token-type\",\n                           authorization: \"authorization\" }\n\nend\n```\n\n## 参考\n\nhttps://github.com/lynndylanhurley/devise_token_auth/issues/1540\n",
+    "coediting": false,
+    "comments_count": 0,
+    "created_at": "2023-08-27T23:58:36+09:00",
+    "group": null,
+    "id": "8b6355081037e0b88da8",
+    "likes_count": 0,
+    "private": false,
+    "reactions_count": 0,
+    "stocks_count": 0,
+    "tags": [
+      {
+        "name": "Rails",
+        "versions": []
+      },
+      {
+        "name": "devise_token_auth",
+        "versions": []
+      }
+    ],
+    "title": "【Rails】DeviseTokenAuthのNoMethodError (undefined method `downcase' for nil:NilClass)対処法",
+    "updated_at": "2023-08-27T23:58:36+09:00",
+    "url": "https://qiita.com/P-man_Brown/items/8b6355081037e0b88da8",
+    "user": {
+      "description": "",
+      "facebook_id": "",
+      "followees_count": 0,
+      "followers_count": 20,
+      "github_login_name": null,
+      "id": "P-man_Brown",
+      "items_count": 633,
+      "linkedin_id": "",
+      "location": "",
+      "name": "",
+      "organization": "",
+      "permanent_id": 2342443,
+      "profile_image_url": "https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/2342443/profile-images/1645878775",
+      "team_only": false,
+      "twitter_screen_name": "Pman_Brown",
+      "website_url": ""
+    },
+    "page_views_count": null,
+    "team_membership": null,
+    "organization_url_name": null,
+    "slide": false
+  }
+

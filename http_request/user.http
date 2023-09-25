@@ -1,0 +1,9 @@
+### ユーザー情報の取得の処理
+GET http://localhost:10001/api/v1/users
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTA4ODAxNDcsInVzZXJfaWQiOjF9.OC1UpAeCr-JFIpOtjOPxpfDMLjpnx0yHmgCrqMcMJXo
+
+### ユーザー情報一覧をCSVに吐き出す処理
+POST http://localhost:10001/api/v1/users-export
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTA4ODAxNDcsInVzZXJfaWQiOjF9.OC1UpAeCr-JFIpOtjOPxpfDMLjpnx0yHmgCrqMcMJXo

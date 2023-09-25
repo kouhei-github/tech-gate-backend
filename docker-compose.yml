@@ -1,0 +1,68 @@
+version: '3'
+services:
+  go:
+    container_name: engineer-aggregate-golang
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    command: ${GOLANG_COMMAND}
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./src:/app
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - ${GOLANG_PORT}
+      - ${AIR_TOML_PORT}
+    depends_on:
+      - "db"
+
+  db:
+    image: mysql:5.7
+    container_name: engineer_aggregate_host # phpMyAdminサービスのPMA_HOSTSに設定する
+    environment:
+      MYSQL_ROOT_PASSWORD: ${ROOTPASS}
+      MYSQL_DATABASE: ${DATABASE}
+      MYSQL_USER: ${USERNAME}
+      MYSQL_PASSWORD: ${USERPASS}
+      TZ: 'Asia/Tokyo'
+      LC_ALL: 'ja_JP.UTF-8'
+      LANG: "ja_JP.UTF-8"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./docker/db/data:/var/lib/mysql
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - "3306:3306"
+
+  # phpMyAdmin
+  phpmyadmin:
+    container_name: engineer_aggregatephpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOSTS=engineer_aggregate_host
+      - PMA_USER=root
+      - PMA_PASSWORD=root
+    ports:
+      - "8080:80"
+
+#  https-portal:
+#    image: steveltn/https-portal:1
+#    ports:
+#      - '80:80'
+#      - '443:443'
+#    environment:
+#      DOMAINS: ${HTTP_PORTAL_DOMAIN}
+#      STAGE: ${STAGE} # Don't use production until staging works
+#      CUSTOM_NGINX_DOMAIN_TLD_CONFIG_BLOCK:
+#        ${NGINX_CONFIG_SETTING}
+#    volumes:
+#      - https-portal-data:/var/lib/https-portal
+#
+#volumes:
+#  https-portal-data: # Recommended, to avoid re-signing when upgrading HTTPS-PORTAL
+#  db-data:
+#    driver: local
+
