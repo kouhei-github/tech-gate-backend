@@ -15,14 +15,14 @@ func (router *Router) GetAuthRouter() {
 	router.Mutex.HandleFunc("/api/v1/user/update", user.UserUpdateHandler)
 
 	// いいね　アクション
-	router.Mutex.HandleFunc("/api/v1/article/like", article.FindUserLikedArticle)
-
+	router.Mutex.HandleFunc("/api/v1/article/like", article.SaveUserLikedArticle)
 	// ユーザーのいいね一覧
+	router.Mutex.HandleFunc("/api/v1/article-like", article.FindUserLikedArticle)
 
 	// ブックマーク アクション
-	router.Mutex.HandleFunc("/api/v1/article/book-mark", article.FindUserBookMarkArticle)
-
+	router.Mutex.HandleFunc("/api/v1/article/book-mark", article.SaveUserBookMarkArticle)
 	// ユーザーのブックマーク一覧
+	router.Mutex.HandleFunc("/api/v1/book-mark", article.FindUserBookMarkedArticle)
 
 	// コメント アクション
 

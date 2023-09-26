@@ -15,9 +15,9 @@ type searchTag struct {
 }
 
 type searchArticleTagResponse struct {
-	Data         []response  `json:"data"`
-	SearchTagUrl string      `json:"search_tag_url"`
-	RelatedTags  []searchTag `json:"related_tags"`
+	Data         []articleResponse `json:"data"`
+	SearchTagUrl string            `json:"search_tag_url"`
+	RelatedTags  []searchTag       `json:"related_tags"`
 }
 
 func SearchArticlesByTag(w http.ResponseWriter, r *http.Request) {
@@ -47,31 +47,9 @@ func SearchArticlesByTag(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var responses []response
+	var responses []articleResponse
 	var relatedTags []searchTag
 	for _, article := range tagRecord.Articles {
-		var res response
-		var redirectSite site
-		if strings.Contains(article.Url, "qiita") {
-			redirectSite.Image = "https://youliangdao.s3.ap-northeast-1.amazonaws.com/favicon.png"
-			redirectSite.Name = "qiita.com"
-		} else {
-			redirectSite.Image = "https://youliangdao.s3.ap-northeast-1.amazonaws.com/logo-only.png"
-			redirectSite.Name = "zenn.dev"
-		}
-
-		res.Id = article.ID
-		res.Site = redirectSite
-		res.Url = article.Url
-		res.ImageUrl = article.ImageUrl
-		res.Tags = article.Tags
-		res.Title = article.Title
-		res.PublishedAt = article.PublishedAt
-		res.Comments = article.Comments
-		res.UserBookMarked = article.UserBookMarked
-		res.UserLiked = article.UserLiked
-		res.Tags = article.Tags
-
 		for _, articleTag := range article.Tags {
 			if articleTag.ImageURL == "" || contains(relatedTags, articleTag.Name) {
 				continue
@@ -79,7 +57,7 @@ func SearchArticlesByTag(w http.ResponseWriter, r *http.Request) {
 			searchTag := searchTag{Name: articleTag.Name, Image: articleTag.ImageURL}
 			relatedTags = append(relatedTags, searchTag)
 		}
-
+		res := createArticleResponse(*article)
 		responses = append(responses, res)
 	}
 

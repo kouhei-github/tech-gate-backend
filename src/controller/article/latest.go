@@ -7,11 +7,10 @@ import (
 	"net-http/myapp/utils"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 )
 
-type response struct {
+type articleResponse struct {
 	Id             uint                  `json:"id"`
 	Title          string                `json:"title"`
 	ImageUrl       string                `json:"image"`
@@ -22,6 +21,9 @@ type response struct {
 	UserBookMarked []*repository.User    `gojson:"book_marked"`
 	Comments       []*repository.Comment `json:"comment"`
 	Site           site                  `json:"site"`
+	GoodNum        int                   `json:"good_num"`
+	BookMarkedNum  int                   `json:"book_marked_num"`
+	CommentNum     int                   `json:"comment_num"`
 }
 
 type site struct {
@@ -68,27 +70,9 @@ func GetArticleLatest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var responses []response
+	var responses []articleResponse
 	for _, article := range *articles {
-		var res response
-		var redirectSite site
-		if strings.Contains(article.Url, "qiita") {
-			redirectSite.Image = "https://youliangdao.s3.ap-northeast-1.amazonaws.com/favicon.png"
-			redirectSite.Name = "qiita.com"
-		} else {
-			redirectSite.Image = "https://youliangdao.s3.ap-northeast-1.amazonaws.com/logo-only.png"
-			redirectSite.Name = "zenn.dev"
-		}
-		res.Id = article.ID
-		res.Site = redirectSite
-		res.Url = article.Url
-		res.ImageUrl = article.ImageUrl
-		res.Tags = article.Tags
-		res.Title = article.Title
-		res.PublishedAt = article.PublishedAt
-		res.Comments = article.Comments
-		res.UserBookMarked = article.UserBookMarked
-		res.UserLiked = article.UserLiked
+		res := createArticleResponse(article)
 		responses = append(responses, res)
 	}
 	json.NewEncoder(w).Encode(responses)

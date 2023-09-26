@@ -3,23 +3,33 @@ GET http://localhost:10001/api/v1/article/latest?page=1
 Content-Type: application/json
 
 ### タグでの検索
-GET http://localhost:10001/api/v1/article?tag=Ruby
+GET http://localhost:10001/api/v1/article?tag=Python
 Content-Type: application/json
 
 ### 記事のいいね
 POST http://localhost:10001/api/v1/article/like
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTU2OTQyNjMsInVzZXIiOiIxIn0.pTVI-I-e3lLNzK35g45Nv0gGmShVqy39xk_D500Nr10
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTU3MTIyMTMsInVzZXIiOiIyIn0.7Mm0yHBoIJ3W-sNkuNcPIqcPciHUTKiM5OXrmciVMig
 
 {
-  "article_id": 100
+  "article_id": 106
 }
 
 ### 記事のブックマーク
 POST http://localhost:10001/api/v1/article/book-mark
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTU2OTQyNjMsInVzZXIiOiIxIn0.pTVI-I-e3lLNzK35g45Nv0gGmShVqy39xk_D500Nr10
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTU3MTIyMTMsInVzZXIiOiIyIn0.7Mm0yHBoIJ3W-sNkuNcPIqcPciHUTKiM5OXrmciVMig
 
 {
-  "article_id": 160
+  "article_id": 3
 }
+
+### ユーザーのいいね記事一覧
+GET http://localhost:10001/api/v1/article-like?page=1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTU3MTIyMTMsInVzZXIiOiIyIn0.7Mm0yHBoIJ3W-sNkuNcPIqcPciHUTKiM5OXrmciVMig
+
+### ユーザーのブックマーク記事の一覧
+GET http://localhost:10001/api/v1/book-mark?page=1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTU3MTIyMTMsInVzZXIiOiIyIn0.7Mm0yHBoIJ3W-sNkuNcPIqcPciHUTKiM5OXrmciVMig

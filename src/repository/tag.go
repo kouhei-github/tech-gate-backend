@@ -24,6 +24,6 @@ func FindByTagNames(name string) ([]Tag, error) {
 
 func FindRelatedByTagNames(name string, pageNation int) (*Tag, error) {
 	var tag Tag
-	err := db.Model(&Tag{}).Preload("Articles").Preload("Articles.Tags").Offset((pageNation-1)*30).Limit(30).Where("name = ?", name).Find(&tag).Error
+	err := db.Model(&Tag{}).Preload("Articles").Preload("Articles.Tags").Preload("Articles.UserLiked").Preload("Articles.UserBookMarked").Offset((pageNation-1)*30).Limit(30).Where("name = ?", name).Find(&tag).Error
 	return &tag, err
 }

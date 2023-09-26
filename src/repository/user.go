@@ -39,3 +39,17 @@ func (receiver *User) Update() error {
 	result := db.Save(receiver)
 	return result.Error
 }
+
+func FindUserBookMarkArticle(userId uint64) (*User, error) {
+	var user User
+	//err := db.Preload("ArticleBookMarked.UserLiked").Preload("ArticleBookMarked.UserBookMarked").First(&user, "id = ?", userId).Error
+	err := db.Preload("ArticleBookMarked").First(&user, "id = ?", userId).Error
+
+	return &user, err
+}
+
+func FindUserLikeArticle(userId uint64) (*User, error) {
+	var user User
+	err := db.Preload("ArticleLiked").First(&user, "id = ?", userId).Error
+	return &user, err
+}

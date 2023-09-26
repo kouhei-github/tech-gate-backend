@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-func FindUserBookMarkArticle(w http.ResponseWriter, r *http.Request) {
+func SaveUserBookMarkArticle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method != "POST" {
@@ -96,4 +96,120 @@ func FindUserBookMarkArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(article)
+}
+
+func FindUserBookMarkedArticle(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	if r.Method != "GET" {
+		w.WriteHeader(405)
+		json.NewEncoder(w).Encode(utils.MyError{Message: "Method Not Allowed"})
+		return
+	}
+
+	// headerからBearer Token読み出し
+	tokenString := r.Header.Get("Authorization")
+	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
+	// tokenの認証
+	token, err := jwt.VerifyToken(tokenString)
+	if err != nil {
+		if err.Error() == "Token is expired" {
+			utils.WriteLogFile("JWT Tokenが失効しています")
+			utils.WriteLogFile(err.Error())
+			w.WriteHeader(403)
+			json.NewEncoder(w).Encode(utils.MyError{Message: "Token is expired"})
+			return
+		}
+		utils.WriteLogFile("JWT Tokenを取得できませんでした")
+		utils.WriteLogFile(err.Error())
+		w.WriteHeader(500)
+		json.NewEncoder(w).Encode(utils.MyError{Message: "Internal Server Error"})
+		return
+	}
+
+	// tokenからuser_idの取得
+	claims := token.Claims.(jwt2.MapClaims)
+	searchId := claims["user"].(string)
+	userId, err := strconv.ParseUint(searchId, 10, 64)
+	if err != nil {
+		utils.WriteLogFile("interfaceをuintに変更できませんでした")
+		utils.WriteLogFile(err.Error())
+		w.WriteHeader(500)
+		json.NewEncoder(w).Encode(utils.MyError{Message: "Internal Server Error"})
+		return
+	}
+
+	// いいねする処理を書く
+	//記事の検索
+	user, err := repository.FindUserBookMarkArticle(userId)
+	if err != nil {
+		utils.WriteLogFile("interfaceをuintに変更できませんでした")
+		utils.WriteLogFile(err.Error())
+		w.WriteHeader(500)
+		json.NewEncoder(w).Encode(utils.MyError{Message: "Internal Server Error"})
+		return
+	}
+
+	if len(user.ArticleBookMarked) == 0 {
+		utils.WriteLogFile("記事が存在しません")
+		w.WriteHeader(404)
+		json.NewEncoder(w).Encode(utils.MyError{Message: "記事が存在しません"})
+		return
+	}
+
+	// ページネーション
+	page := r.URL.Query().Get("page")
+	pageNation, err := strconv.Atoi(page)
+	fmt.Println(pageNation)
+	var nextNum int
+	if err != nil || pageNation == 1 {
+		fmt.Println(err)
+		pageNation = 0
+		nextNum = 8
+	} else {
+		pageNation = (pageNation - 1) + 8
+		nextNum = pageNation + 8
+	}
+
+	if len(user.ArticleBookMarked) < pageNation {
+		utils.WriteLogFile("記事が存在しません")
+		w.WriteHeader(404)
+		json.NewEncoder(w).Encode(utils.MyError{Message: "記事が存在しません"})
+		return
+	}
+
+	if len(user.ArticleBookMarked) < nextNum {
+		nextNum = len(user.ArticleBookMarked) - 1
+	}
+
+	var articleIds []uint
+	if pageNation == nextNum {
+		for _, userBookMark := range user.ArticleBookMarked {
+			articleIds = append(articleIds, userBookMark.ID)
+		}
+	} else {
+		userBookMarks := user.ArticleBookMarked[pageNation : nextNum+1]
+		for _, userBookMark := range userBookMarks {
+			articleIds = append(articleIds, userBookMark.ID)
+		}
+
+	}
+
+	articles, err := repository.FindLikeArticleByIds(articleIds)
+	if err != nil {
+		utils.WriteLogFile("ここで終了")
+		utils.WriteLogFile(err.Error())
+		w.WriteHeader(500)
+		json.NewEncoder(w).Encode(utils.MyError{Message: "Internal Server Error"})
+		return
+	}
+
+	var responses []articleResponse
+	for _, article := range *articles {
+		res := createArticleResponse(article)
+		responses = append(responses, res)
+	}
+
+	json.NewEncoder(w).Encode(responses)
 }
