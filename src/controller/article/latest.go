@@ -12,6 +12,7 @@ import (
 )
 
 type response struct {
+	Id             uint                  `json:"id"`
 	Title          string                `json:"title"`
 	ImageUrl       string                `json:"image"`
 	Url            string                `json:"url"`
@@ -78,7 +79,7 @@ func GetArticleLatest(w http.ResponseWriter, r *http.Request) {
 			redirectSite.Image = "https://youliangdao.s3.ap-northeast-1.amazonaws.com/logo-only.png"
 			redirectSite.Name = "zenn.dev"
 		}
-
+		res.Id = article.ID
 		res.Site = redirectSite
 		res.Url = article.Url
 		res.ImageUrl = article.ImageUrl

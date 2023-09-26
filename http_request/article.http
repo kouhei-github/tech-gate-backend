@@ -5,3 +5,21 @@ Content-Type: application/json
 ### タグでの検索
 GET http://localhost:10001/api/v1/article?tag=Ruby
 Content-Type: application/json
+
+### 記事のいいね
+POST http://localhost:10001/api/v1/article/like
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTU2OTQyNjMsInVzZXIiOiIxIn0.pTVI-I-e3lLNzK35g45Nv0gGmShVqy39xk_D500Nr10
+
+{
+  "article_id": 100
+}
+
+### 記事のブックマーク
+POST http://localhost:10001/api/v1/article/book-mark
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTU2OTQyNjMsInVzZXIiOiIxIn0.pTVI-I-e3lLNzK35g45Nv0gGmShVqy39xk_D500Nr10
+
+{
+  "article_id": 160
+}

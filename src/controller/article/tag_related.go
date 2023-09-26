@@ -60,6 +60,7 @@ func SearchArticlesByTag(w http.ResponseWriter, r *http.Request) {
 			redirectSite.Name = "zenn.dev"
 		}
 
+		res.Id = article.ID
 		res.Site = redirectSite
 		res.Url = article.Url
 		res.ImageUrl = article.ImageUrl
@@ -72,7 +73,7 @@ func SearchArticlesByTag(w http.ResponseWriter, r *http.Request) {
 		res.Tags = article.Tags
 
 		for _, articleTag := range article.Tags {
-			if articleTag.ImageURL == "" {
+			if articleTag.ImageURL == "" || contains(relatedTags, articleTag.Name) {
 				continue
 			}
 			searchTag := searchTag{Name: articleTag.Name, Image: articleTag.ImageURL}
@@ -89,4 +90,13 @@ func SearchArticlesByTag(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(result)
+}
+
+func contains(searchTags []searchTag, str string) bool {
+	for _, searchTag := range searchTags {
+		if searchTag.Name == str {
+			return true
+		}
+	}
+	return false
 }

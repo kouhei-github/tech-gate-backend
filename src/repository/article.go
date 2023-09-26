@@ -23,6 +23,11 @@ func (article *Article) Save() error {
 	return result.Error
 }
 
+func (article *Article) Update() error {
+	result := db.Save(article)
+	return result.Error
+}
+
 func FindByTitles(title string) ([]Article, error) {
 	var articles []Article
 	result := db.Where("title = ?", title).Find(&articles)
@@ -33,10 +38,22 @@ func FindByArticles(pageNation int) (*[]Article, error) {
 	var articles []Article
 	var result *gorm.DB
 	if pageNation < 1 {
-		result = db.Model(&Article{}).Preload("Tags").Offset(1).Limit(30).Find(&articles)
+		result = db.Model(&Article{}).Preload("Tags").Order("created_at desc").Offset(1).Limit(30).Find(&articles)
 	} else {
 
-		result = db.Model(&Article{}).Preload("Tags").Offset((pageNation - 1) * 30).Limit(30).Find(&articles)
+		result = db.Model(&Article{}).Preload("Tags").Order("created_at desc").Offset((pageNation - 1) * 30).Limit(30).Find(&articles)
 	}
 	return &articles, result.Error
+}
+
+func FindLikeArticleById(articleId uint) (*Article, error) {
+	var article Article
+	err := db.Preload("UserLiked").First(&article, "id = ?", articleId).Error
+	return &article, err
+}
+
+func FindBookMarkArticleById(articleId uint) (*Article, error) {
+	var article Article
+	err := db.Preload("UserBookMarked").First(&article, "id = ?", articleId).Error
+	return &article, err
 }

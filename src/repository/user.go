@@ -38,5 +38,4 @@ func (receiver *User) FindById(userId uint) error {
 func (receiver *User) Update() error {
 	result := db.Save(receiver)
 	return result.Error
-
 }
