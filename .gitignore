@@ -198,7 +198,7 @@ src/public/*
 # vendor/
 
 # Go workspace file
-go.work
+src/go.work
 
-cloud_formation_update.yml
 pre-commit.sh
+src/main
