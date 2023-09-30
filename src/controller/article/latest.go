@@ -3,10 +3,13 @@ package article
 import (
 	"encoding/json"
 	"fmt"
+	jwt2 "github.com/dgrijalva/jwt-go"
 	"net-http/myapp/repository"
 	"net-http/myapp/utils"
+	"net-http/myapp/utils/jwt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -24,6 +27,8 @@ type articleResponse struct {
 	GoodNum        int                   `json:"good_num"`
 	BookMarkedNum  int                   `json:"book_marked_num"`
 	CommentNum     int                   `json:"comment_num"`
+	NowBookmarked  bool                  `json:"now_bookmarked"`
+	NowLiked       bool                  `json:"now_liked"`
 }
 
 type site struct {
@@ -70,9 +75,37 @@ func GetArticleLatest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// headerからBearer Token読み出し
+	tokenString := r.Header.Get("Authorization")
+	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
+	// tokenの認証
+	token, err := jwt.VerifyToken(tokenString)
+	var userId uint64
+	userId = 0
+	if err != nil {
+		if err.Error() == "Token is expired" {
+			utils.WriteLogFile("JWT Tokenが失効しています")
+			utils.WriteLogFile(err.Error())
+		} else {
+			utils.WriteLogFile("JWT Tokenを取得できませんでした")
+			utils.WriteLogFile(err.Error())
+		}
+
+	} else {
+		claims := token.Claims.(jwt2.MapClaims)
+		searchId := claims["user"].(string)
+		userId, err = strconv.ParseUint(searchId, 10, 64)
+		if err != nil {
+			utils.WriteLogFile("interfaceをuintに変更できませんでした")
+			utils.WriteLogFile(err.Error())
+		}
+	}
+	utils.WriteLogFile(string(userId))
+
 	var responses []articleResponse
 	for _, article := range *articles {
-		res := createArticleResponse(article)
+		res := createArticleResponse(article, userId)
 		responses = append(responses, res)
 	}
 	json.NewEncoder(w).Encode(responses)

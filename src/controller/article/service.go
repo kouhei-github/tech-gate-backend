@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func createArticleResponse(article repository.Article) articleResponse {
+func createArticleResponse(article repository.Article, userId uint64) articleResponse {
 	var res articleResponse
 	var redirectSite site
 	if strings.Contains(article.Url, "qiita") {
@@ -40,6 +40,28 @@ func createArticleResponse(article repository.Article) articleResponse {
 	} else {
 		res.GoodNum = len(article.UserLiked)
 	}
+	if userId != 0 {
+		if includeLoginUser(article.UserBookMarked, uint(userId)) {
+			res.NowBookmarked = true
+		} else {
+			res.NowBookmarked = false
+		}
+
+		if includeLoginUser(article.UserLiked, uint(userId)) {
+			res.NowLiked = true
+		} else {
+			res.NowLiked = false
+		}
+	}
 
 	return res
+}
+
+func includeLoginUser(users []*repository.User, userId uint) bool {
+	for _, user := range users {
+		if user.ID == userId {
+			return true
+		}
+	}
+	return false
 }

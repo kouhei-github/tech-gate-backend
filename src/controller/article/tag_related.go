@@ -2,8 +2,10 @@ package article
 
 import (
 	"encoding/json"
+	jwt2 "github.com/dgrijalva/jwt-go"
 	"net-http/myapp/repository"
 	"net-http/myapp/utils"
+	"net-http/myapp/utils/jwt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -39,6 +41,33 @@ func SearchArticlesByTag(w http.ResponseWriter, r *http.Request) {
 		pageNation = 1
 	}
 
+	// headerからBearer Token読み出し
+	tokenString := r.Header.Get("Authorization")
+	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
+	// tokenの認証
+	token, err := jwt.VerifyToken(tokenString)
+	var userId uint64
+	userId = 0
+	if err != nil {
+		if err.Error() == "Token is expired" {
+			utils.WriteLogFile("JWT Tokenが失効しています")
+			utils.WriteLogFile(err.Error())
+		} else {
+			utils.WriteLogFile("JWT Tokenを取得できませんでした")
+			utils.WriteLogFile(err.Error())
+		}
+
+	} else {
+		claims := token.Claims.(jwt2.MapClaims)
+		searchId := claims["user"].(string)
+		userId, err = strconv.ParseUint(searchId, 10, 64)
+		if err != nil {
+			utils.WriteLogFile("interfaceをuintに変更できませんでした")
+			utils.WriteLogFile(err.Error())
+		}
+	}
+
 	// article_tagsテーブル(Many to Many)から検索
 	tagRecord, err := repository.FindRelatedByTagNames(tag, pageNation)
 	if err != nil {
@@ -57,7 +86,8 @@ func SearchArticlesByTag(w http.ResponseWriter, r *http.Request) {
 			searchTag := searchTag{Name: articleTag.Name, Image: articleTag.ImageURL}
 			relatedTags = append(relatedTags, searchTag)
 		}
-		res := createArticleResponse(*article)
+		res := createArticleResponse(*article, userId)
+
 		responses = append(responses, res)
 	}
 

@@ -207,7 +207,7 @@ func FindUserBookMarkedArticle(w http.ResponseWriter, r *http.Request) {
 
 	var responses []articleResponse
 	for _, article := range *articles {
-		res := createArticleResponse(article)
+		res := createArticleResponse(article, userId)
 		responses = append(responses, res)
 	}
 
