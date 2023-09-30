@@ -8,6 +8,7 @@ services:
     command: ${GOLANG_COMMAND}
     stdin_open: true
     tty: true
+    working_dir: /app
     volumes:
       - ./src:/app
     environment:
