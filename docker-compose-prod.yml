@@ -1,0 +1,49 @@
+version: '3'
+services:
+  go:
+    container_name: engineer-aggregate-golang
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    command: ${GOLANG_COMMAND}
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./src:/app
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - ${GOLANG_PORT}
+      - ${AIR_TOML_PORT}
+
+  web:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - api
+
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      DOMAINS: ${HTTP_PORTAL_DOMAIN}
+      STAGE: ${STAGE} # Don't use production until staging works
+      CUSTOM_NGINX_DOMAIN_TLD_CONFIG_BLOCK:
+        ${NGINX_CONFIG_SETTING}
+    volumes:
+      - https-portal-data:/var/lib/https-portal
+
+volumes:
+  https-portal-data: # Recommended, to avoid re-signing when upgrading HTTPS-PORTAL
+  db-data:
+    driver: local
+
