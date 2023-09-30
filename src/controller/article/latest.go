@@ -25,7 +25,6 @@ type articleResponse struct {
 	Comments       []*repository.Comment `json:"comment"`
 	Site           site                  `json:"site"`
 	GoodNum        int                   `json:"good_num"`
-	BookMarkedNum  int                   `json:"book_marked_num"`
 	CommentNum     int                   `json:"comment_num"`
 	NowBookmarked  bool                  `json:"now_bookmarked"`
 	NowLiked       bool                  `json:"now_liked"`

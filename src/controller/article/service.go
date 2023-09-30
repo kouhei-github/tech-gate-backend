@@ -30,11 +30,6 @@ func createArticleResponse(article repository.Article, userId uint64) articleRes
 	} else {
 		res.CommentNum = len(article.Comments)
 	}
-	if article.UserBookMarked == nil {
-		res.BookMarkedNum = 0
-	} else {
-		res.BookMarkedNum = len(article.UserBookMarked)
-	}
 	if article.UserLiked == nil {
 		res.GoodNum = 0
 	} else {
