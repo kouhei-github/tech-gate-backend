@@ -3,11 +3,18 @@ package route
 import (
 	"net-http/myapp/controller"
 	"net-http/myapp/controller/article"
+	"net-http/myapp/controller/authoraization"
 	"net-http/myapp/controller/google"
 	"net-http/myapp/controller/user"
 )
 
 func (router *Router) GetAuthRouter() {
+	// サインアップ
+	router.Mutex.HandleFunc("/api/v1/signup", authoraization.Signup)
+
+	// ログイン
+	router.Mutex.HandleFunc("/api/v1/login", authoraization.NormalLogin)
+
 	router.Mutex.HandleFunc("/api/v1/auth", controller.HandlerTwo)
 	router.Mutex.HandleFunc("/api/v1/google/login", google.GoogleOauth)
 	router.Mutex.HandleFunc("/api/v1/google/callback", google.GoogleLoginHandler)

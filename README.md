@@ -255,3 +255,17 @@ stdinからデータを渡す。
 ```shell
 $ cat input.json | node ./json-to-go.js > output.go
 ```
+
+---
+
+## 5. Golangのbuild
+Linux
+```shell
+GOOS=linux CGO_ENABLED=0 go build -o main main.go
+```
+Mac
+```shell
+GOOS=darwin GOARCH=amd64 go build -o main-mac main.go
+```
+
+---
