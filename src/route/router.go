@@ -30,4 +30,7 @@ func (router *Router) GetRouter() {
 	// 人気の記事一覧
 
 	// タグの管理
+
+	// タグ一覧
+	router.Mutex.HandleFunc("/api/v1/tag", article.TagListHandler)
 }
