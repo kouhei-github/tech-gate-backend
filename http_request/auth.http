@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "name": "テストユーザー",
-  "email": "nagamatsu-k@dym.jp",
+  "email": "nagamatsu-k@test.jp",
   "password": "password",
   "company_id": 1
 }
@@ -15,6 +15,6 @@ POST http://localhost:10001/api/v1/login
 Content-Type: application/json
 
 {
-  "email": "nagamatsu-k@dym.jp",
+  "email": "nagamatsu-k@test.jp",
   "password": "password"
 }
